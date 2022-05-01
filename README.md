@@ -1,2 +1,4 @@
-# Minishell
+# Minishell:
 This project is about creating a simple shell. Yes, your own little bash. You will learn a lot about processes and file descriptors.
+## Introduction to allowed functions:
+- [readline](docs/readline.MD)
