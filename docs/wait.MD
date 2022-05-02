@@ -69,6 +69,123 @@ waitpid(-1, &wstatus, 0);
  ## What is the difference between a wait () and sleep ()?
  - Both sleep() and wait() are used to put the current thread on hold, but they were designed for different use cases: There must be someone outside who will wake up the thread by calling notify() or notifyAll() on the monitor (on the same object that was used to call wait() ).
  - wait() is used for inter-thread communication while sleep() is used to introduce pause on execution, generally. Thread. sleep() sends the current thread into the “Not Runnable” state for some amount of time.
-
-
+## Child status information: 
+- Status information about the child reported by wait is more than just the exit status of the child, it also includes 
+       - normal/abnormal termination
+       - termination cause
+       - exit status
+- For find information about status, we use 
+```
+WIF….macros
+       1. WIFEXITED(status): child exited normally 
+       • WEXITSTATUS(status): return code when child exits
+       2. WIFSIGNALED(status): child exited because a signal was not caught 
+       • WTERMSIG(status): gives the number of the terminating signal
+       3. WIFSTOPPED(status): child is stopped 
+       • WSTOPSIG(status): gives the number of the stop signal
+```
+## Sample programs:
+- C program to demonstrate working of wait()
+```
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/wait.h>
+#include<unistd.h>
  
+int main()
+{
+    pid_t cpid;
+    if (fork()== 0)
+        exit(0);           /* terminate child */
+    else
+        cpid = wait(NULL); /* reaping parent */
+    printf("Parent pid = %d\n", getpid());
+    printf("Child pid = %d\n", cpid);
+ 
+    return 0;
+}
+```
+- Out put
+```
+Parent pid = 90170
+Child pid = 90171
+```
+- C program to demonstrate working of status from wait.
+```
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/wait.h>
+#include<unistd.h>
+ 
+void waitexample()
+{
+    int stat;
+ 
+    // This status 1 is reported by WEXITSTATUS
+    if (fork() == 0)
+        exit(1);
+    else
+        wait(&stat);
+    if (WIFEXITED(stat))
+        printf("Exit status: %d\n", WEXITSTATUS(stat));
+    else if (WIFSIGNALED(stat))
+        psignal(WTERMSIG(stat), "Exit signal");
+}
+ 
+// Driver code
+int main()
+{
+    waitexample();
+    return 0;
+}
+```
+- Out put
+```
+       Exit status: 1 
+```
+- C program to demonstrate waitpid()
+```
+       #include<stdio.h>
+       #include<stdlib.h>
+       #include<sys/wait.h>
+       #include<unistd.h>
+
+       void waitexample()
+       {
+           int i, stat;
+           pid_t pid[5];
+           for (i=0; i<5; i++)
+           {
+               if ((pid[i] = fork()) == 0)
+               {
+                   sleep(1);
+                   exit(100 + i);
+               }
+           }
+
+           // Using waitpid() and printing exit status
+           // of children.
+           for (i=0; i<5; i++)
+           {
+               pid_t cpid = waitpid(pid[i], &stat, 0);
+               if (WIFEXITED(stat))
+                   printf("Child %d terminated with status: %d\n",
+                          cpid, WEXITSTATUS(stat));
+           }
+       }
+
+       // Driver code
+       int main()
+       {
+           waitexample();
+           return 0;
+       }
+```
+- Out put
+```
+       Child 91216 terminated with status: 100
+       Child 91217 terminated with status: 101
+       Child 91218 terminated with status: 102
+       Child 91219 terminated with status: 103
+       Child 91220 terminated with status: 104
+```
