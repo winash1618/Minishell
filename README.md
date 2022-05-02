@@ -10,3 +10,7 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - [fork](docs/fork.MD)
 - [wait](docs/wait.MD)
 - [getcwd](docs/getcwd.MD)
+- [chdir](docs/chdir.MD)
+- [stat, fstat, lsata](docs/stat.MD)
+- [unlink](docs/unlink.MD)
+- [execve](docs/execve.MD)
