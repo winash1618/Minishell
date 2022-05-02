@@ -4,6 +4,7 @@
 - https://man7.org/linux/man-pages/man2/execve.2.html
 - https://stackoverflow.com/questions/10321435/is-char-envp-as-a-third-argument-to-main-portable ---envp---
 - https://stackoverflow.com/questions/10649273/where-is-the-definition-of-extern-char-environ ---environ---
+- https://linuxhint.com/c-execve-function-usage/#:~:text=Execve()%20function%20is%20used,program%20and%20print%20the%20output.
 ## Synopsis
 ```
        #include <unistd.h>
