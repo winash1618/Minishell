@@ -4,6 +4,7 @@
 - https://stackoverflow.com/questions/23709888/how-to-use-wait-in-c
 - https://man7.org/linux/man-pages/man2/wait.2.html
 - https://www.geeksforgeeks.org/wait-system-call-c/
+- https://man7.org/linux/man-pages/man2/wait3.2.html
 ## Synopsis
 ```
        #include <sys/wait.h>
