@@ -7,3 +7,6 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 ## Introduction to allowed functions:
 - [readline](docs/readline.MD)
 - [access](docs/access.MD)
+- [fork](docs/fork.MD)
+- [wait](docs/wait.MD)
+- [getcwd](docs/getcwd.MD)
