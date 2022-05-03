@@ -5,6 +5,7 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - https://github.com/anolivei/Minishell42
 - https://tiswww.case.edu/php/chet/readline/history.html#SEC12
 - http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/ ----------------explore------------------
+- http://www.kohala.com/start/ ------------------explore------------------
 ## Introduction to allowed functions:
 - [readline](docs/readline.MD)
 - [access](docs/access.MD)
