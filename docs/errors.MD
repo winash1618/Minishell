@@ -2,6 +2,8 @@
 ## Resources
 - https://www.tutorialspoint.com/c_standard_library/c_function_strerror.htm
 - https://man7.org/linux/man-pages/man3/strerror.3.html
+- https://man7.org/linux/man-pages/man3/perror.3.html
+- https://www.tutorialspoint.com/c_standard_library/c_function_perror.htm
 ## Synopsis
 ```
        #include <string.h>
