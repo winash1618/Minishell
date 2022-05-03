@@ -10,6 +10,7 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/unix_lecture_notes.php
 - https://medium.com/@sahmaanwar61/how-i-made-a-miniaturized-unix-shell-using-c-fbd69ca7f584
 - https://github.com/kalpishs/Unix-Shell-Implementation-in-C/blob/master/shell.c
+- https://viewsourcecode.org/snaptoken/kilo/index.html ----------make your own text editor walk through---------
 ## Introduction to allowed functions:
 - [readline](docs/readline.MD)
 - [access](docs/access.MD)
