@@ -6,6 +6,10 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - https://tiswww.case.edu/php/chet/readline/history.html#SEC12
 - http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/ ----------------explore------------------
 - http://www.iakovlev.org/index.html?p=1169&m=1&l1=5 ---explore---
+- https://medium.com/swlh/tutorial-to-code-a-simple-shell-in-c-9405b2d3533e
+- http://www.compsci.hunter.cuny.edu/~sweiss/course_materials/unix_lecture_notes.php
+- https://medium.com/@sahmaanwar61/how-i-made-a-miniaturized-unix-shell-using-c-fbd69ca7f584
+- https://github.com/kalpishs/Unix-Shell-Implementation-in-C/blob/master/shell.c
 ## Introduction to allowed functions:
 - [readline](docs/readline.MD)
 - [access](docs/access.MD)
