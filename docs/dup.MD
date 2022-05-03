@@ -1,6 +1,7 @@
 # dup, dup2 - duplicate a file descriptor
 ## Resources
-
+- https://www.geeksforgeeks.org/dup-dup2-linux-system-call/
+- https://man7.org/linux/man-pages/man2/dup.2.html
 ## Synopsis
 ```
        #include <unistd.h>
