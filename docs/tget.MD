@@ -2,7 +2,22 @@
 - badprog.com/unix-gnu-linux-system-calls-using-tgetnum
 - https://man7.org/linux/man-pages/man5/termcap.5.html
 - https://www.badprog.com/unix-gnu-linux-system-calls-using-tgetflag
+- https://www.gnu.org/software/termutils/manual/termcap-1.3/html_node/termcap_1.html#SEC1
 
+# tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs - curses emulation of termcap
+## Synopsis
+```
+       #include <curses.h>
+       #include <term.h>
+       
+       int tgetent(char *bp, const char *name);
+       int tgetflag(const char *id);
+       int tgetnum(const char *id);
+       char *tgetstr(const char *id, char **area);
+       char *tgoto(const char *cap, int col, int row);
+       int tputs(const char *str, int affcnt, int (*putc)(int));
+```
+## Description
 
 ## Sample program
 - Let's see an example of the tgetflag() function with to show if our terminal has a status line (hs):
@@ -76,3 +91,24 @@
   L : 107
   mkaruvan@lab3r3s10 intro_to_allowed_functions %
 ```
+- Now lets look at how we can clear the terminal screen when using tgetent and tgetstr.
+```
+  #include <curses.h>
+  #include <term.h>
+  #include <stdio.h>
+  #include <stdlib.h>   // getenv
+  #include <termcap.h>  // tgetent tgetstr
+  int main(void)
+  {
+      char buf[1024];
+      char *str;
+      tgetent(buf, getenv("TERM"));
+      str = tgetstr("cl", NULL);
+      //printf("%s", str); behave same like fputs
+      fputs(str, stdout);
+      return 0;
+  }
+```
+- Compile the above code with -ltermcap.
+- Out put will clear the screen.
+
