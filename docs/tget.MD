@@ -10,6 +10,11 @@
        #include <curses.h>
        #include <term.h>
        
+       extern char PC;
+       extern char * UP;
+       extern char * BC;
+       extern unsigned ospeed;
+       
        int tgetent(char *bp, const char *name);
        int tgetflag(const char *id);
        int tgetnum(const char *id);
@@ -18,7 +23,28 @@
        int tputs(const char *str, int affcnt, int (*putc)(int));
 ```
 ## Description
+- This function finds the description and remembers it internally so that you can interrogate it about specific terminal capabilities ith tgetnum, tgetstr or tgetflag. The argument termtype is a string which is the name for the type of terminal to look up. Usually you would obtain this from the environment variable TERM using getenv ("TERM"). With the Unix version of termcap, you must allocate space for the description yourself and pass the address of the space as the argument buffer. There is no way you can tell how much space is needed, so the convention is to allocate a buffer 2048 characters long and assume that is enough.
+- Each piece of information recorded in a terminal description is called a capability. Each defined terminal capability has a two-letter code name and a specific meaning. For example, the number of columns is named 'co'.
+- Once you have found the proper terminal description with tgetent, your application program must interrogate it for various terminal capabilities. You must specify the two-letter code of the capability whose value you seek.
+- Capability values can be numeric, boolean (capability is either present or absent) or strings. Any particular capability always has the same value type; for example, 'co' always has a numeric value, while 'am' (automatic wrap at margin) is always a flag, and 'cm' (cursor motion command) always has a string value. The documentation of each capability says which type of value it has.
+- There are three functions to use to get the value of a capability, depending on the type of value the capability has. Here are their declarations in ANSI C:
+       - tgetnum : Use tgetnum to get a capability value that is numeric. The argument name is the two-letter code name of the capability. If the capability is present, tgetnum returns the numeric value (which is nonnegative). If the capability is not mentioned in the terminal description, tgetnum returns -1.
+       - tgetflag : Use tgetflag to get a boolean value. If the capability name is present in the terminal description, tgetflag returns 1; otherwise, it returns 0.
+       - tgetstr : Use tgetstr to get a string value. It returns a pointer to a string which is the capability value, or a null pointer if the capability is not present in the terminal description. You need to provide the space yourself for the string, this is the only method supported by the Unix version of termcap.
+- Before starting to output commands to a terminal using termcap, an application program should do two things: 
+       - Initialize various global variables which termcap library output functions refer to. These include PC and ospeed for padding and UP and BC for cursor motion.
+       - Tell the kernel to turn off alteration and padding of horizontal-tab characters sent to the terminal.
+- Use the termcap function tputs to output a string containing an optional padding spec The function tputs strips off and decodes the padding spec, outputs the rest of the string, and then outputs the appropriate padding. Here is its declaration in ANSI C:
+```
+char PC;
+short ospeed;
 
+int tputs (char *string, int nlines, int (*outfun) ());
+```
+- For the 'cm' capability, since tgoto has a special feature to avoid problems with null characters, tabs and newlines on certain old terminal types that use '%.' encoding for that capability.
+- There are three arguments, the terminal description's 'cm' string and the two cursor position numbers; tgoto computes the parametrized string in an internal static buffer and returns the address of that buffer. The next time you use tgoto the same buffer will be reused.
+## Return value
+- The return value of tgetent is -1 if there is some difficulty accessing the data base of terminal types, 0 if the data base is accessible but the specified type is not defined in it, and some other value otherwise.
 ## Sample program
 - Let's see an example of the tgetflag() function with to show if our terminal has a status line (hs):
 ```
