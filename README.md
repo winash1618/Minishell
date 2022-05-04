@@ -14,6 +14,8 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - https://brennan.io/2015/01/16/write-a-shell-in-c/
 - https://xesoa.com/wp-content/uploads/2014/04/APUE-3rd.pdf
 - https://www.quora.com/What-are-some-good-tutorials-for-writing-a-shell-in-C
+- https://web.stonehill.edu/compsci/CS314/Assignments/Assignment2.pdf
+- https://indradhanush.github.io/blog/writing-a-unix-shell-part-1/?utm_source=linuxnewssite.com
 ## Introduction to allowed functions:
 - [readline](docs/readline.MD)
 - [access](docs/access.MD)
