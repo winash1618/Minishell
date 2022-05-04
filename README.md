@@ -11,6 +11,9 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - https://medium.com/@sahmaanwar61/how-i-made-a-miniaturized-unix-shell-using-c-fbd69ca7f584
 - https://github.com/kalpishs/Unix-Shell-Implementation-in-C/blob/master/shell.c
 - https://viewsourcecode.org/snaptoken/kilo/index.html ----------make your own text editor walk through---------
+- https://brennan.io/2015/01/16/write-a-shell-in-c/
+- https://xesoa.com/wp-content/uploads/2014/04/APUE-3rd.pdf
+- https://www.quora.com/What-are-some-good-tutorials-for-writing-a-shell-in-C
 ## Introduction to allowed functions:
 - [readline](docs/readline.MD)
 - [access](docs/access.MD)
@@ -29,4 +32,5 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - [ttyname & ttyslot](docs/tty.MD)
 - [ioctl](docs/ioctl.MD)
 - [getenv](docs/getenv.MD)
-- [tcsetattr & tcgetattr](tcattr.MD)
+- [tcsetattr & tcgetattr](docs/tcattr.MD)
+- [tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs](docs/tget.MD)
