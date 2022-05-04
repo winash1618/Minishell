@@ -64,7 +64,7 @@
     CNTRL-k   kill the string from the curser to the end of the line
     CNTRL-l   clear the screen and re-print the prompt and input string at the top
 ```
-- output:
+- output: execute with -lreadline
 ```
        enter a string:  jhs
        You entered: jhs
