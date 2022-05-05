@@ -3,6 +3,7 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 ## tips
 - echo $PATH (you can do echo to display what is value of environment variable)
 - if you forgot what meta character is read [this](https://en.wikipedia.org/wiki/Metacharacter).
+- print all the environment varialbles. read [this](https://stackoverflow.com/questions/2085302/printing-all-environment-variables-in-c-c).
 ## resources:
 - https://www.cs.purdue.edu/homes/grr/SystemsProgrammingBook/Book/Chapter5-WritingYourOwnShell.pdf
 - https://github.com/anolivei/Minishell42
