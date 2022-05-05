@@ -2,6 +2,7 @@
 This project is about creating a simple shell. Yes, your own little bash. You will learn a lot about processes and file descriptors.
 ## tips
 - echo $PATH (you can do echo to display what is value of environment variable)
+- if you forgot what meta character is read [this](https://en.wikipedia.org/wiki/Metacharacter).
 ## resources:
 - https://www.cs.purdue.edu/homes/grr/SystemsProgrammingBook/Book/Chapter5-WritingYourOwnShell.pdf
 - https://github.com/anolivei/Minishell42
