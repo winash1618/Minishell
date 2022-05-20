@@ -20,6 +20,7 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - https://www.quora.com/What-are-some-good-tutorials-for-writing-a-shell-in-C
 - https://web.stonehill.edu/compsci/CS314/Assignments/Assignment2.pdf
 - https://indradhanush.github.io/blog/writing-a-unix-shell-part-1/?utm_source=linuxnewssite.com
+- http://metalab.uniten.edu.my/~abdrahim/csnb334(xcvb)/ll_.pdf
 ## Introduction to allowed functions:
 - [readline](docs/readline.MD)
 - [access](docs/access.MD)
