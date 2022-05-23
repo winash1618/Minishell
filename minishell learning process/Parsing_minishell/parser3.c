@@ -64,6 +64,13 @@ int ft_isspace(char c)
 	return (0);
 }
 
+int is_quote(char c)
+{
+	if (c == '"' || c == 39)
+		return (0);
+	return (1);
+} 
+
 int get_word_len(char *line)
 {
 	int len;
@@ -73,7 +80,7 @@ int get_word_len(char *line)
 		line++;
 	if (!*line)
 		return (-1);
-	while (!ft_isspace(*line) && *line)
+	while (!ft_isspace(*line) && *line && is_quote(*line))
 	{
 		line++;
 		len++;
@@ -122,10 +129,12 @@ char *go_past_quotes(char *s, char ch)
 char *get_word(char *line)
 {
 	char *word;
+	int flag;
+	flag = 1;
 
 	int len = get_word_len(line);
 	if (len <= 0)
-		return (NULL);
+		flag = 0;
 	
 	while (ft_isspace(*line) && *line)
 		line++;
@@ -134,16 +143,19 @@ char *get_word(char *line)
 		return(quoted_word(++line, '"'));
 	if(*line == 39)
 		return(quoted_word(++line, 39));
-	word = malloc(sizeof(char) * (len + 1));
-	while (line[i])
+	if(flag)
 	{
-		if (ft_isspace(line[i]))
-			break;
-		word[i] = line[i];
-		i++;
+		word = malloc(sizeof(char) * (len + 1));
+		while (line[i] && is_quote(line[i]))
+		{
+			if (ft_isspace(line[i]))
+				break;
+			word[i] = line[i];
+			i++;
+		}
+		word[i] = '\0';
 	}
-	word[i] = '\0';
-
+	
 	return (word);
 }
 
@@ -232,7 +244,7 @@ void norm_parser (t_new **pars, char *str)
 			flag = 0;
 			temp = go_past_quotes(++str, 39);
 		}
-		while(*str && !ft_isspace(*str) && flag)
+		while(*str && !ft_isspace(*str) && flag && is_quote(*str))
 			str++;
 		if (!flag)
 		{

@@ -51,6 +51,12 @@ typedef struct list
 	struct list	*prev;
 }	t_new;
 
+typedef struct info
+{
+	int flag;
+	int w_flag;
+} t_info;
+
 typedef struct parse
 {
 	t_new *cmd_lst;
@@ -64,6 +70,13 @@ int ft_isspace(char c)
 	return (0);
 }
 
+int is_quote(char c)
+{
+	if (c == '"' || c == 39)
+		return (0);
+	return (1);
+} 
+
 int get_word_len(char *line)
 {
 	int len;
@@ -73,7 +86,7 @@ int get_word_len(char *line)
 		line++;
 	if (!*line)
 		return (-1);
-	while (!ft_isspace(*line) && *line)
+	while (!ft_isspace(*line) && *line && is_quote(*line))
 	{
 		line++;
 		len++;
@@ -94,7 +107,6 @@ int ft_strlen_ch(char *line, char c)
 
 char *quoted_word(char *line, char ch)
 {
-	
 	int len = ft_strlen_ch(line, ch);
 	char *s = malloc(sizeof(char) * (len + 1));
 	int i = 0;
@@ -106,7 +118,6 @@ char *quoted_word(char *line, char ch)
 	s[i] = '\0';
 	if (!line[i])
 		return (NULL);
-	printf("%s \n", s);
 	return (s);
 }
 char *go_past_quotes(char *s, char ch)
@@ -119,23 +130,23 @@ char *go_past_quotes(char *s, char ch)
 	return (s);
 }
 
-char *get_word(char *line)
+int check_word_for_parsing(char *line)
+{
+	if (*(line) == '"')
+		return (1);
+	else if (*(line) == 39)
+		return (2);
+	else
+		return (3);
+}
+
+char *normal_word(char *line)
 {
 	char *word;
-
 	int len = get_word_len(line);
-	if (len <= 0)
-		return (NULL);
-	
-	while (ft_isspace(*line) && *line)
-		line++;
-	int i = 0;
-	if(*line == '"')
-		return(quoted_word(++line, '"'));
-	if(*line == 39)
-		return(quoted_word(++line, 39));
 	word = malloc(sizeof(char) * (len + 1));
-	while (line[i])
+	int i = 0;
+	while (line[i] && is_quote(line[i]))
 	{
 		if (ft_isspace(line[i]))
 			break;
@@ -143,7 +154,23 @@ char *get_word(char *line)
 		i++;
 	}
 	word[i] = '\0';
+	return (word);
+}
 
+char *get_word(t_info *info, char *line)
+{
+	char *word;
+	info->flag = 1;
+
+	while (ft_isspace(*line) && *line)
+		line++;
+	info->w_flag = check_word_for_parsing(line);
+	if (info->w_flag == 3)
+		word = normal_word(line);
+	else if (info->w_flag == 1)
+		word = quoted_word(++line, '"');
+	else if (info->w_flag == 2)
+		word = quoted_word(line, 39);
 	return (word);
 }
 
@@ -158,28 +185,16 @@ void lst_add_back(t_new **pars, char *str)
 	t_new *par;
 	par = *pars;
 	t_new *temp;
-	// printf("%p %p %s %p \n", (*pars), (*pars)->prev, (*pars)->token, (*pars)->next);
 	while ((*pars)->next)
 	{
-		// printf("%p %p %s %p \n", (*pars), (*pars)->prev, (*pars)->token, (*pars)->next);
 		(*pars) = (*pars)->next;
 	}
-	// printf("%p %p %s %p \n", (*pars), (*pars)->prev, (*pars)->token, (*pars)->next);
 	temp = malloc(sizeof(t_new));
 	temp->token = str;
 	(*pars)->next = temp;
 	temp->next = NULL;
 	temp->prev = (*pars);
 	(*pars) = par;
-	// printf("%p %p %s %p \n", (*pars), (*pars)->prev, (*pars)->token, (*pars)->next);
-	// while ((*pars)->next)
-	// {
-	// 	printf("%p %p %s %p \n", (*pars), (*pars)->prev, (*pars)->token, (*pars)->next);
-	// 	(*pars) = (*pars)->next;
-	// }
-	// printf("%p %p %s %p \n", (*pars), (*pars)->prev, (*pars)->token, (*pars)->next);
-	// (*pars) = par;
-
 }
 
 void lst_print_vars(t_var *vars)
@@ -199,7 +214,7 @@ void lst_print(t_new *pars)
 	}
 }
 
-void norm_parser (t_new **pars, char *str)
+void norm_parser (t_new **pars, t_info *info, char *str)
 {
 	int wc;
 	wc = 0;
@@ -214,12 +229,12 @@ void norm_parser (t_new **pars, char *str)
 		if (!wc && *str)
 		{
 			(*pars) = malloc(sizeof(t_new));
-			lst_add_new(pars, get_word(str));
+			lst_add_new(pars, get_word(info, str));
 			wc++;
 		}
 		else if (*str)
 		{
-			lst_add_back(pars, get_word(str));
+			lst_add_back(pars, get_word(info, str));
 			wc++;
 		}
 		if (*str == '"')
@@ -232,7 +247,7 @@ void norm_parser (t_new **pars, char *str)
 			flag = 0;
 			temp = go_past_quotes(++str, 39);
 		}
-		while(*str && !ft_isspace(*str) && flag)
+		while(*str && !ft_isspace(*str) && flag && is_quote(*str))
 			str++;
 		if (!flag)
 		{
@@ -371,15 +386,17 @@ void var_parser (t_var **var, char *line)
 int main()
 {
 	char buf[1024];
+	t_info *info;
+	info = malloc(sizeof(t_info));
 	t_parse *parse;
 	parse = malloc(sizeof(t_parse));
 	t_new *cmd;
-	
+	info->flag = 1;
 	t_var *var;
 	char *str;
 	tgetent(buf, getenv("TERM"));
-	// str = tgetstr("cl", NULL);
-	// printf("%s", str);
+	str = tgetstr("cl", NULL);
+	printf("%s", str);
 	printf("");
 	char *line;
 	while (1)
@@ -400,7 +417,7 @@ int main()
 			}
 			else
 			{
-				norm_parser(&cmd, line);
+				norm_parser(&cmd, info, line);
 			}
 		}
 		free (line);
