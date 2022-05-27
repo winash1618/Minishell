@@ -8,7 +8,6 @@
 #include <string.h>
 #include <readline/history.h>
 
-
 size_t	ft_strlen(const char *s)
 {
 	size_t	count;
@@ -66,6 +65,7 @@ typedef struct info
 	int w_flag; // if the string is double quoted then this flag exist.
 	int e_flag; // if the string starts with an equal sign it's an error;
 	int q_flag; // exist when count either of the quotes is odd
+	int dq_flag; // presence of $ then " or '
 } t_info;
 
 // to check for spaces
@@ -182,12 +182,18 @@ int check_word_for_parsing(char *line)
 }
 
 // get normal word
-char *normal_word(char *line)
+char *normal_word(char *line, t_info *info)
 {
 	char *word;
 	int len = get_word_len(line);
-	word = malloc(sizeof(char) * (len + 1));
+	int count = 0;
 	int i = 0;
+	if (*line == '$')
+	{
+		if (*(line + 1) == '"' || *(line + 1) == 39)
+			return (NULL);
+	}
+	word = malloc(sizeof(char) * (len + 1));
 	while (line[i] && is_quote(line[i]))
 	{
 		if (ft_isspace(line[i]))
@@ -211,7 +217,7 @@ char *get_word(t_info *info, char *line)
 		line++;
 	info->w_flag = check_word_for_parsing(line);
 	if (info->w_flag == 3)
-		word = normal_word(line);
+		word = normal_word(line, info);
 	else if (info->w_flag == 1)
 		word = quoted_word(++line, '"');
 	else if (info->w_flag == 2)
@@ -465,7 +471,7 @@ void find_dollar_presence(t_new *cmd)
 		while(cmd->token[i])
 		{
 			if (cmd->token[i] == '$')
-				cmd->d_flag = 1;
+				cmd->d_flag += 1;
 			i++;
 		}
 		cmd = cmd->next;
@@ -497,38 +503,170 @@ int is_meta(char c)
 	}
 	return (0);
 }
-// char *ft_substr(char const *s, unsigned int start, size_t len)
-// {
-// 	char *str;
-// 	int i;
 
-// 	i = 0;
-// 	str = (char *) ft_calloc((len + 1), sizeof(char));
-// 	if (!str || !s)
-// 		return (NULL);
-// 	if (start >= ft_strlen(s))
-// 		return (str);
-// 	while (s[start] && len)
-// 	{
-// 		str[i++] = s[start];
-// 		start++;
-// 		len--;
-// 	}
-// 	return (str);
-// }
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char	*k;
+	size_t			count;
 
+	k = s;
+	count = 0;
+	while (n)
+	{
+		*k++ = 0;
+		n--;
+		count++;
+	}
+	k = k - count - 1;
+}
 
-// void dollar_expansion(t_new *cmd, char **env)
-// {
-// 	int i = 0;
-// 	int c = 0;
+void	*ft_calloc(size_t count, size_t size)
+{
+	void	*ptr;
 
-// 	while (env[i])
-// 	{
-// 		if ()
-// 		ft_strlen(ft_substr(env[i], 0, ft_strlen_sub(env[i])))
-// 	}
-// }
+	if (size == SIZE_MAX && count > 1)
+		return (NULL);
+	ptr = malloc(size * count);
+	if (!ptr)
+		return (0);
+	ft_bzero(ptr, size * count);
+	return (ptr);
+}
+
+char *ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char *str;
+	int i;
+
+	i = 0;
+	str = (char *) ft_calloc((len + 1), sizeof(char));
+	if (!str || !s)
+		return (NULL);
+	if (start >= ft_strlen(s))
+		return (str);
+	while (s[start] && len)
+	{
+		str[i++] = s[start];
+		start++;
+		len--;
+	}
+	return (str);
+}
+
+static size_t	isneedle(const char *haystack, const char *needle, size_t len)
+{
+	int		c;
+	size_t	count1;
+
+	c = 0;
+	count1 = 0;
+	while (*haystack && *needle && *haystack == *needle && len)
+	{
+		haystack++;
+		needle++;
+		count1++;
+		len--;
+	}
+	if (!*needle)
+		c = 1;
+	needle = needle - count1;
+	haystack = haystack - count1;
+	if (c)
+		return (count1);
+	return (0);
+}
+
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+{
+	size_t	l;
+	size_t	count;
+	size_t	count1;
+
+	l = len;
+	count = 0;
+	count1 = 0;
+	if (!(*haystack) && l)
+		if (*needle)
+			return (NULL);
+	if (!(*needle) || !(*haystack))
+		return ((char *) haystack);
+	while (l && *haystack && *needle)
+	{
+		if (isneedle(haystack, needle, l))
+			return ((char *) haystack);
+		haystack++;
+		count++;
+		l--;
+	}
+	return (NULL);
+}
+
+int get_strlen(char *str)
+{
+	int i = 0;
+	while (str[i] && !is_meta(str[i]))
+	{
+		i++;
+	} 
+	return (i);
+}
+
+char *get_dollar_path(char *str, char **env)
+{
+	int i = 0;
+	int len = get_strlen(str);
+	char *s = ft_substr(str, 0, len);
+	char *s1;
+	s1 = NULL;
+	while(env[i])
+	{
+		s1 = ft_strnstr(env[i], s, len);
+		i++;
+	}
+	if (!s1)
+		return (NULL);
+	return (s1);
+}
+
+char *get_expanded_string(char *str, char **env)
+{
+	int i = 0;
+	char *s;
+
+	s = NULL;
+	while(str[i])
+	{
+		if (str[i] == '$')
+		{
+			s = get_dollar_path(str + i + 1, env);
+			i = i + get_strlen(str + i + 1) + 1;
+		}
+		i++;
+	}
+	i = 0;
+	while(str[i])
+	{
+		if (str[i] == '$')
+		{
+			
+			i = i + get_strlen(str + i + 1) + 1;
+		}
+		i++;
+	}
+	if (!s)
+		return (NULL);
+	return (s);
+}
+
+dollar_expansion(t_new *cmd, char **env)
+{
+	while (cmd != NULL)
+	{
+		if (cmd->d_flag)
+			cmd->es = get_expanded_string(cmd->token, env);
+		cmd = cmd->next;
+	}
+}
 
 int main(int ac, char **av, char **env)
 {
@@ -570,7 +708,7 @@ int main(int ac, char **av, char **env)
 			{
 				normal_lexer(&cmd, info, line);
 				find_dollar_presence(cmd);
-				// dollar_expansion(cmd, env);
+				dollar_expansion(cmd, env);
 				lst_print(cmd);
 			}
 		}
