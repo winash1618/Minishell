@@ -4,6 +4,9 @@ This project is about creating a simple shell. Yes, your own little bash. You wi
 - echo $PATH (you can do echo to display what is value of environment variable)
 - if you forgot what meta character is read [this](https://en.wikipedia.org/wiki/Metacharacter).
 - print all the environment varialbles. read [this](https://stackoverflow.com/questions/2085302/printing-all-environment-variables-in-c-c).
+- Global variable 
+- https://www.quora.com/We-can-access-global-variables-in-other-files-Why-cant-we-access-static-global-variables-in-other-files
+- A global variable is a variable that is defined outside all functions and available to all functions. These variables are unaffected by scopes and are always available, which means that a global variable exists until the program ends. It is possible to create a global variable in one file and access it from another file. In order to do this, the variable must be declared in both files, but the keyword extern must precede the "second" declaration. global static variable is one that can only be accessed in the file where it is created. This variable is said to have file scope. So if the global variable is static it can not be accessed outside the file.
 ## resources:
 - https://www.cs.purdue.edu/homes/grr/SystemsProgrammingBook/Book/Chapter5-WritingYourOwnShell.pdf
 - https://github.com/anolivei/Minishell42
