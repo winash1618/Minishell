@@ -1,0 +1,108 @@
+NAME		=	minishell
+
+LIBFT_DIR	=	libft
+LIBFT		=	libft.a
+GNL_DIR		=	$(LIBFT_DIR)/get_next_line
+GNL			=	gnl.a
+RL_INC		=	-I /usr/local/opt/readline/include
+RL_LINK		=	-L /usr/local/opt/readline/lib -l readline
+
+INC_DIR		=	include
+SRC_DIR		=	sources
+OBJ_DIR		=	objects
+
+BUILTINS	=	builtins
+EXECUTION	=	execution
+PARSER		=	parser
+
+SRCS		=	minishell.c \
+				$(addprefix $(BUILTINS)/,	echo.c \
+											pwd.c \
+											export_utils1.c \
+											export_utils2.c \
+											export.c \
+											unset_utils.c \
+											unset.c \
+											env_utils.c \
+											env.c \
+											cd.c \
+											exit_utils.c \
+											exit.c \
+											builtin_utils.c) \
+				$(addprefix $(PARSER)/,		dollar_check.c \
+											dollar_exp1.c \
+											dollar_exp2.c \
+											dollar_exp3.c \
+											dollar_exp4.c \
+											dollar_len.c \
+											error_check.c \
+											error_utils1.c \
+											error_utils2.c \
+											error_utils3.c \
+											error_utils4.c \
+											extract_str.c \
+											initial_array.c \
+											lexer.c \
+											metachar.c \
+											parser1.c \
+											parser2.c \
+											parser3.c \
+											remove_quotes.c \
+											shell_utils.c \
+											struct1.c \
+											struct2.c \
+											tokens.c) \
+				$(addprefix $(EXECUTION)/,	exec_ms.c \
+											exec_ms_1.c \
+											exec_pipes.c \
+											exec_pipes_2.c \
+											exec_pipes_3.c \
+											exec_redirections.c \
+											exec_redirections_2.c )
+
+OBJS		=	$(addprefix $(OBJ_DIR)/, $(SRCS:%c=%o))
+
+CC			=	gcc
+CFLAGS		=	-g -Wall -Wextra -Werror
+LIB_AR		=	ar rcs
+RM			=	rm -rf
+
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
+			@mkdir -p $(OBJ_DIR)
+			@mkdir -p $(OBJ_DIR)/$(BUILTINS)
+			@mkdir -p $(OBJ_DIR)/$(EXECUTION)
+			@mkdir -p $(OBJ_DIR)/$(PARSER)
+			@printf $(CYAN)
+			@$(CC) $(CFLAGS) -I $(INC_DIR) -I $(LIBFT_DIR)/$(INC_DIR) -I $(GNL_DIR)/$(INC_DIR) $(RL_INC) -c $< -o $@
+
+all:		$(NAME)
+
+$(NAME):	$(LIBFT) $(GNL) $(OBJS)
+			@$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)/$(LIBFT) $(GNL_DIR)/$(GNL) $(RL_LINK) -o $@
+
+$(LIBFT):
+			@printf $(DEFAULT)
+			@make -C $(LIBFT_DIR) all
+
+$(GNL):
+			@make -C $(GNL_DIR) all
+
+clean:
+			@make -C $(LIBFT_DIR) fclean
+			@make -C $(GNL_DIR) fclean
+			@$(RM) $(OBJ_DIR)
+
+fclean:		clean
+			@$(RM) $(NAME)
+
+norm:
+			@make -C $(LIBFT_DIR) norm
+			@make -C $(GNL_DIR) norm
+			@echo $(DEFAULT)$(YELLOW_BU)"minishell .c files"$(DEFAULT)$(CYAN)
+			@norminette -R CheckForbiddenSourceHeader $(SRC_DIR)/*.c
+			@echo $(DEFAULT)$(YELLOW_BU)"minishell .h files"$(DEFAULT)$(CYAN)
+			@norminette -R CheckDefine $(INC_DIR)/*.h
+
+re:			fclean all
+
+.PHONY:		all clean fclean re
